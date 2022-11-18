@@ -38,3 +38,29 @@ func ListTask(c *gin.Context) {
 		c.JSON(200, res)
 	}
 }
+
+func UpdateTask(c *gin.Context) {
+	var updateTask service.UpdateTaskService
+	//claim, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	if err := c.ShouldBindJSON(&updateTask); err != nil {
+		logging.Error(err)
+		c.JSON(400, ErrorResponse(err))
+	} else {
+		res := updateTask.Update(c.Param("id"))
+		c.JSON(200, res)
+	}
+}
+
+func SearchTask(c *gin.Context) {
+	searchTaskService := service.SearchTaskService{}
+	claim, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	res := searchTaskService.Search(claim.Id)
+	c.JSON(200, res)
+}
+
+func DeleteTask(c *gin.Context) {
+	searchTaskService := service.DeleteTaskService{}
+	//claim, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	res := searchTaskService.Delete(c.Param("id"))
+	c.JSON(200, res)
+}
