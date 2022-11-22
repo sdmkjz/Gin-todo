@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -13,9 +14,14 @@ var Db *gorm.DB
 var err error
 
 func DataBase(connstring string) {
+	var ormLogger logger.Interface
+	if gin.Mode() == "debug" {
+		ormLogger = logger.Default.LogMode(logger.Info)
+	} else {
+		ormLogger = logger.Default
+	}
 	Db, err = gorm.Open(mysql.Open(connstring), &gorm.Config{
-		// gorm日志模式：silent
-		Logger: logger.Default.LogMode(logger.Silent),
+		Logger: ormLogger,
 		// 外键约束
 		DisableForeignKeyConstraintWhenMigrating: true,
 		// 禁用默认事务（提高运行速度）
